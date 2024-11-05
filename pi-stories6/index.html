@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Raspberry Pi 4 Upgrading k3s software on your cluster - Raspberry PI k3s stories</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Raspberry Pi 4 Upgrading k3s software on your cluster";
+        var mkdocs_page_input_path = "pi-stories6.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Raspberry PI k3s stories
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">WELCOME</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">PI4 STORIES</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories1/">Raspberry Pi 4 Basic OS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories2/">Raspberry Pi 4 Prepare for kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories3/">Raspberry Pi 4 Installing k3s software</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories4/">Raspberry Pi 4 Install awesome kubectl aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories5/">Raspberry Pi 4 Installing cert-manager on our cluster</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Raspberry Pi 4 Upgrading k3s software on your cluster</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#raspberry_pi_4_cluster_series_-_upgrading_k3s_software_on_your_cluster">Raspberry Pi 4 cluster Series - Upgrading k3s software on your cluster</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#crd_installation">CRD installation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#how_to_upgrade_the_crd">How to Upgrade the CRD</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#making_a_k3s_upgrade_plan">Making a k3s upgrade plan</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#references">References</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories7/">Raspberry Pi 4 YAML everywhere -what about correctness?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories8/">Raspberry Pi 4 Keep your Operating System updated</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories9/">Raspberry Pi 4 Installation of Longhorn</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories10/">Raspberry Pi 4 Issues after upgrading k3s</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories11/">Raspberry Pi 4 Replacing internal traefik with Metallb</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories12/">Raspberry Pi 4 Spin up graphite and temperature2celsius pods</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories13/">Raspberry Pi 4 Setup monitoring</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories14/">Raspberry Pi 4 Setup logging with Loki</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories15/">Raspberry Pi 4 Troubleshooting</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories16/">Raspberry Pi 4 Deploying uptime kuma with helm</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories17/">Raspberry Pi 4 Deploying ntopng with helm</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories18/">Raspberry Pi 4 Deploying jenkins with yaml files</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Raspberry PI k3s stories</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">PI4 STORIES</li>
+      <li class="breadcrumb-item active">Raspberry Pi 4 Upgrading k3s software on your cluster</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="pi4_stories">PI4 Stories<a class="headerlink" href="#pi4_stories" title="Permanent link">&para;</a></h1>
+<h2 id="raspberry_pi_4_cluster_series_-_upgrading_k3s_software_on_your_cluster">Raspberry Pi 4 cluster Series - Upgrading k3s software on your cluster<a class="headerlink" href="#raspberry_pi_4_cluster_series_-_upgrading_k3s_software_on_your_cluster" title="Permanent link">&para;</a></h2>
+<p>It is advisable to track the security vulnerabilities published by Rancher Labs around k3s. For example, in November 2020 a critical bug was detected in k3s (see [1]). Therefore, it is quite important to be able to update k3s without interrupting the k3s cluster, hence this procedure from Rancher Labs.</p>
+<pre><code class="language-bash">$ kubectl get nodes
+NAME   STATUS   ROLES    AGE    VERSION
+n3     Ready    &lt;none&gt;   117d   v1.19.2+k3s1
+n2     Ready    &lt;none&gt;   117d   v1.19.2+k3s1
+n4     Ready    &lt;none&gt;   117d   v1.19.2+k3s1
+n1     Ready    master   117d   v1.19.2+k3s1
+n5     Ready    &lt;none&gt;   117d   v1.19.2+k3s1
+</code></pre>
+<h2 id="crd_installation">CRD installation<a class="headerlink" href="#crd_installation" title="Permanent link">&para;</a></h2>
+<p>We will follow the procedure described in [2] and are required first to install a kubernetes Custom Resource Definition (CRD) [3] followed by creating a Plan.</p>
+<p>To find the latest version of the system upgrade controller use the following command (sources of Rancher [6]):</p>
+<pre><code class="language-bash">VERSION=$(curl -s &quot;https://api.github.com/repos/rancher/system-upgrade-controller/releases/latest&quot; | awk -F '&quot;' '/tag_name/{print $4}')
+echo $VERSION
+</code></pre>
+<p>To download the CRD locally run the following command:</p>
+<pre><code class="language-bash">$ wget https://raw.githubusercontent.com/rancher/system-upgrade-controller/${VERSION}/manifests/system-upgrade-controller.yaml
+</code></pre>
+<p>Now get it applied by:</p>
+<pre><code class="language-bash">$ kubectl apply -f ./system-upgrade-controller.yaml 
+namespace/system-upgrade created
+serviceaccount/system-upgrade created
+clusterrolebinding.rbac.authorization.k8s.io/system-upgrade created
+configmap/default-controller-env created
+deployment.apps/system-upgrade-controller created
+
+$ kubectl get all -n system-upgrade
+NAME                                             READY   STATUS    RESTARTS   AGE
+pod/system-upgrade-controller-556df575dd-2qfrs   1/1     Running   0          17s
+
+NAME                                        READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/system-upgrade-controller   1/1     1            1           17s
+
+NAME                                                   DESIRED   CURRENT   READY   AGE
+replicaset.apps/system-upgrade-controller-556df575dd   1         1         1       18s
+</code></pre>
+<h3 id="how_to_upgrade_the_crd">How to Upgrade the CRD<a class="headerlink" href="#how_to_upgrade_the_crd" title="Permanent link">&para;</a></h3>
+<pre><code class="language-bash">VERSION=$(curl -s &quot;https://api.github.com/repos/rancher/system-upgrade-controller/releases/latest&quot; | awk -F '&quot;' '/tag_name/{print $4}')
+echo $VERSION
+
+$ wget https://raw.githubusercontent.com/rancher/system-upgrade-controller/${VERSION}/manifests/system-upgrade-controller.yaml
+
+$ kubectl replace -f ./system-upgrade-controller.yaml
+</code></pre>
+<h2 id="making_a_k3s_upgrade_plan">Making a k3s upgrade plan<a class="headerlink" href="#making_a_k3s_upgrade_plan" title="Permanent link">&para;</a></h2>
+<p>Before making a plan we need to decide to which k3s version we need to upgrade, therefore, check out the <a href="https://github.com/rancher/k3s/releases">GitHub release page of k3s</a>. The latest release of this writing was v1.19.4+k3s1 (30 November 2020).</p>
+<p>The upgrade plan will upgrade the k3s server node (called k3s-server in the plan) and the k3s worker nodes (called k3s-agent in the plan). For that reason we must first label our master node (in our case <em>n1</em>) if that was not yet done:</p>
+<pre><code class="language-bash">$ kubectl get node --selector='node-role.kubernetes.io/master'
+NAME   STATUS   ROLES    AGE    VERSION
+n1     Ready    master   117d   v1.19.2+k3s1
+</code></pre>
+<p>Here we see that node <em>n1</em> was already labelled 'master', however, if that was not yet the case we could realize this by:</p>
+<pre><code class="language-bash">kubectl label node n1 node-role.kubernetes.io/master=true
+</code></pre>
+<p>Edit the plan to update the k3s version (use latest stable release found on <a href="https://github.com/rancher/k3s/releases">GitHub release page of k3s</a>): <code>vi ./k3s-upgrade-plan.yaml</code></p>
+<p>Apply the plan:</p>
+<pre><code class="language-bash">$ kubectl apply -f ./k3s-upgrade-plan.yaml 
+plan.upgrade.cattle.io/k3s-server created
+plan.upgrade.cattle.io/k3s-agent created
+</code></pre>
+<p>Check out if the Plans were added correctly:</p>
+<pre><code class="language-yaml">$ kubectl describe plans.upgrade.cattle.io  -n system-upgrade
+Name:         k3s-server
+Namespace:    system-upgrade
+Labels:       k3s-upgrade=server
+Annotations:  &lt;none&gt;
+API Version:  upgrade.cattle.io/v1
+Kind:         Plan
+Metadata:
+  Creation Timestamp:  2020-11-30T10:53:24Z
+  Generation:          1
+  Managed Fields:
+    API Version:  upgrade.cattle.io/v1
+    Fields Type:  FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .:
+          f:kubectl.kubernetes.io/last-applied-configuration:
+        f:labels:
+          .:
+          f:k3s-upgrade:
+      f:spec:
+        .:
+        f:concurrency:
+        f:cordon:
+        f:nodeSelector:
+          .:
+          f:matchExpressions:
+        f:serviceAccountName:
+        f:upgrade:
+          .:
+          f:image:
+        f:version:
+    Manager:      kubectl-client-side-apply
+    Operation:    Update
+    Time:         2020-11-30T10:53:24Z
+    API Version:  upgrade.cattle.io/v1
+    Fields Type:  FieldsV1
+    fieldsV1:
+      f:status:
+        .:
+        f:conditions:
+        f:latestHash:
+        f:latestVersion:
+    Manager:         system-upgrade-controller
+    Operation:       Update
+    Time:            2020-11-30T10:53:24Z
+  Resource Version:  190476
+  Self Link:         /apis/upgrade.cattle.io/v1/namespaces/system-upgrade/plans/k3s-server
+  UID:               d8bb36e7-7602-4e8f-bda7-b75947752eb1
+Spec:
+  Concurrency:  1
+  Cordon:       true
+  Node Selector:
+    Match Expressions:
+      Key:       k3s-upgrade
+      Operator:  Exists
+      Key:       k3s-upgrade
+      Operator:  NotIn
+      Values:
+        disabled
+        false
+      Key:       k3s.io/hostname
+      Operator:  Exists
+      Key:       k3os.io/mode
+      Operator:  DoesNotExist
+      Key:       node-role.kubernetes.io/master
+      Operator:  In
+      Values:
+        true
+  Service Account Name:  system-upgrade
+  Upgrade:
+    Image:  rancher/k3s-upgrade
+  Version:  v1.19.4+k3s1
+Status:
+  Conditions:
+    Last Update Time:  2020-11-30T10:53:24Z
+    Reason:            Version
+    Status:            True
+    Type:              LatestResolved
+  Latest Hash:         e50d232791db24fa7ce5039d6f9cf61238b420aacf2ecd32db7cfce3
+  Latest Version:      v1.19.4-k3s1
+Events:                &lt;none&gt;
+
+
+Name:         k3s-agent
+Namespace:    system-upgrade
+Labels:       k3s-upgrade=agent
+Annotations:  &lt;none&gt;
+API Version:  upgrade.cattle.io/v1
+Kind:         Plan
+Metadata:
+  Creation Timestamp:  2020-11-30T10:53:24Z
+  Generation:          1
+  Managed Fields:
+    API Version:  upgrade.cattle.io/v1
+    Fields Type:  FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .:
+          f:kubectl.kubernetes.io/last-applied-configuration:
+        f:labels:
+          .:
+          f:k3s-upgrade:
+      f:spec:
+        .:
+        f:concurrency:
+        f:drain:
+          .:
+          f:force:
+        f:nodeSelector:
+          .:
+          f:matchExpressions:
+        f:prepare:
+          .:
+          f:args:
+          f:image:
+        f:serviceAccountName:
+        f:upgrade:
+          .:
+          f:image:
+        f:version:
+    Manager:      kubectl-client-side-apply
+    Operation:    Update
+    Time:         2020-11-30T10:53:24Z
+    API Version:  upgrade.cattle.io/v1
+    Fields Type:  FieldsV1
+    fieldsV1:
+      f:status:
+        .:
+        f:conditions:
+        f:latestHash:
+        f:latestVersion:
+    Manager:         system-upgrade-controller
+    Operation:       Update
+    Time:            2020-11-30T10:53:24Z
+  Resource Version:  190477
+  Self Link:         /apis/upgrade.cattle.io/v1/namespaces/system-upgrade/plans/k3s-agent
+  UID:               db4567a7-f80c-44eb-b5dd-0505159ace87
+Spec:
+  Concurrency:  2
+  Drain:
+    Force:  true
+  Node Selector:
+    Match Expressions:
+      Key:       k3s-upgrade
+      Operator:  Exists
+      Key:       k3s-upgrade
+      Operator:  NotIn
+      Values:
+        disabled
+        false
+      Key:       k3s.io/hostname
+      Operator:  Exists
+      Key:       k3os.io/mode
+      Operator:  DoesNotExist
+      Key:       node-role.kubernetes.io/master
+      Operator:  NotIn
+      Values:
+        true
+  Prepare:
+    Args:
+      prepare
+      k3s-server
+    Image:               rancher/k3s-upgrade
+  Service Account Name:  system-upgrade
+  Upgrade:
+    Image:  rancher/k3s-upgrade
+  Version:  v1.19.4+k3s1
+Status:
+  Conditions:
+    Last Update Time:  2020-11-30T10:53:24Z
+    Reason:            Version
+    Status:            True
+    Type:              LatestResolved
+  Latest Hash:         e50d232791db24fa7ce5039d6f9cf61238b420aacf2ecd32db7cfce3
+  Latest Version:      v1.19.4-k3s1
+Events:                &lt;none&gt;
+</code></pre>
+<p>And, for the magic to happen we just have to enable to k3s upgrade with command:</p>
+<pre><code class="language-bash">$ kubectl label node --all k3s-upgrade=enabled
+node/n2 labeled
+node/n4 labeled
+node/n3 labeled
+node/n1 labeled
+node/n5 labeled
+</code></pre>
+<p>To check if the k3s upgrades are kicking in watch with:</p>
+<pre><code class="language-bash">$ kubectl get pods -n system-upgrade -w
+NAME                                                              READY   STATUS     RESTARTS   AGE
+system-upgrade-controller-556df575dd-2qfrs                        1/1     Running    0          109m
+apply-k3s-agent-on-n4-with-e50d232791db24fa7ce5039d6f9cf6-sspgt   0/1     Init:0/2   0          73s
+apply-k3s-agent-on-n2-with-e50d232791db24fa7ce5039d6f9cf6-2zb2j   0/1     Init:0/2   0          73s
+apply-k3s-server-on-n1-with-e50d232791db24fa7ce5039d6f9cf-2j42m   1/1     Running    0          73s
+apply-k3s-server-on-n1-with-e50d232791db24fa7ce5039d6f9cf-2j42m   0/1     Completed   0          75s
+apply-k3s-agent-on-n2-with-e50d232791db24fa7ce5039d6f9cf6-2zb2j   0/1     Init:1/2    0          89s
+apply-k3s-agent-on-n4-with-e50d232791db24fa7ce5039d6f9cf6-sspgt   0/1     Init:1/2    0          92s
+apply-k3s-agent-on-n2-with-e50d232791db24fa7ce5039d6f9cf6-2zb2j   0/1     Init:1/2    0          104s
+apply-k3s-agent-on-n4-with-e50d232791db24fa7ce5039d6f9cf6-sspgt   0/1     Init:1/2    0          107s
+apply-k3s-agent-on-n2-with-e50d232791db24fa7ce5039d6f9cf6-2zb2j   0/1     PodInitializing   0          108s
+apply-k3s-agent-on-n2-with-e50d232791db24fa7ce5039d6f9cf6-2zb2j   1/1     Running           0          110s
+apply-k3s-agent-on-n4-with-e50d232791db24fa7ce5039d6f9cf6-sspgt   0/1     PodInitializing   0          110s
+apply-k3s-agent-on-n4-with-e50d232791db24fa7ce5039d6f9cf6-sspgt   1/1     Running           0          112s
+apply-k3s-agent-on-n2-with-e50d232791db24fa7ce5039d6f9cf6-2zb2j   0/1     Completed         0          2m19s
+apply-k3s-agent-on-n4-with-e50d232791db24fa7ce5039d6f9cf6-sspgt   0/1     Completed         0          2m21s
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     Pending           0          0s
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     Pending           0          0s
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     Pending           0          0s
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     Pending           0          0s
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     Init:0/2          0          0s
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     Init:0/2          0          0s
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     Init:0/2          0          18s
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     Init:0/2          0          30s
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     Init:1/2          0          33s
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     Init:1/2          0          42s
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     Init:1/2          0          47s
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     Init:1/2          0          61s
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     PodInitializing   0          70s
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     PodInitializing   0          77s
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   1/1     Running           0          79s
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   1/1     Running           0          79s
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     Completed         0          107s
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     Completed         0          109s
+apply-k3s-server-on-n1-with-e50d232791db24fa7ce5039d6f9cf-2j42m   0/1     Terminating       0          16m
+apply-k3s-server-on-n1-with-e50d232791db24fa7ce5039d6f9cf-2j42m   0/1     Terminating       0          16m
+apply-k3s-agent-on-n2-with-e50d232791db24fa7ce5039d6f9cf6-2zb2j   0/1     Terminating       0          17m
+apply-k3s-agent-on-n2-with-e50d232791db24fa7ce5039d6f9cf6-2zb2j   0/1     Terminating       0          17m
+apply-k3s-agent-on-n4-with-e50d232791db24fa7ce5039d6f9cf6-sspgt   0/1     Terminating       0          17m
+apply-k3s-agent-on-n4-with-e50d232791db24fa7ce5039d6f9cf6-sspgt   0/1     Terminating       0          17m
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     Terminating       0          16m
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     Terminating       0          16m
+apply-k3s-agent-on-n5-with-e50d232791db24fa7ce5039d6f9cf6-rtjr7   0/1     Terminating       0          16m
+apply-k3s-agent-on-n3-with-e50d232791db24fa7ce5039d6f9cf6-567zz   0/1     Terminating       0          16m
+</code></pre>
+<p>As you can see from the sequence first the k3s-server gets updated and thereafter, 2 worker nodes at a time as we requested in the plan description.</p>
+<p>After a couple of minutes we see:</p>
+<pre><code class="language-bash">$ kubectl get nodes
+NAME   STATUS   ROLES    AGE    VERSION
+n1     Ready    master   117d   v1.19.4+k3s1
+n2     Ready    &lt;none&gt;   117d   v1.19.4+k3s1
+n4     Ready    &lt;none&gt;   117d   v1.19.4+k3s1
+n3     Ready    &lt;none&gt;   117d   v1.19.4+k3s1
+n5     Ready    &lt;none&gt;   117d   v1.19.4+k3s1
+</code></pre>
+<p>We believe it is better to disable the k3s upgrades once it is done with the command:</p>
+<pre><code class="language-bash">$ kubectl label node --all --overwrite k3s-upgrade=disabled
+node/n5 labeled
+node/n1 labeled
+node/n2 labeled
+node/n4 labeled
+node/n3 labeled
+</code></pre>
+<p>If we want to upgrade again just edit the plan [4]  again with the correct version of k3s and replace the plan with the command:</p>
+<pre><code class="language-bash">$ kubectl replace -f ./k3s-upgrade-plan.yaml
+</code></pre>
+<p>To start the k3s version upgrade overwrite the label k3s-upgrade again with keyword <em>enabled</em>.</p>
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<p>[1] <a href="https://support.rancher.com/hc/en-us/articles/360052567151-Rancher-Operational-Advisory-Attention-All-Rancher-K3s-Customers-DB-bug-requires-upgrade#are-you-running-k3s-clusters-if-so-please-read-further-0-0">Rancher Operational Advisory: Attention All Rancher K3s Customers, DB bug requires upgrade</a></p>
+<p>[2] <a href="https://rancher.com/blog/2020/upgrade-k3s-kubernetes-cluster-system-upgrade-controller?hss_channel=tw-309890367">Automate K3s Upgrades with System Upgrade Controller</a></p>
+<p>[3] <a href="https://github.com/gdha/k3s-upgrade-controller/blob/main/system-upgrade-controller.yaml">CRD system-upgrade-controller</a></p>
+<p>[4] <a href="https://github.com/gdha/k3s-upgrade-controller/blob/main/k3s-upgrade-plan.yaml">k3s Upgrade Plan</a></p>
+<p>[5] <a href="https://github.com/gdha/k3s-upgrade-controller">GitHub Sources of our k3s upgrade controller</a></p>
+<p>[6] <a href="https://github.com/rancher/system-upgrade-controller">GitHub rancher/system-upgrade-controller</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../pi-stories5/" class="btn btn-neutral float-left" title="Raspberry Pi 4 Installing cert-manager on our cluster"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../pi-stories7/" class="btn btn-neutral float-right" title="Raspberry Pi 4 YAML everywhere -what about correctness?">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../pi-stories5/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../pi-stories7/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

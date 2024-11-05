@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Raspberry Pi 4 Spin up graphite and temperature2celsius pods - Raspberry PI k3s stories</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Raspberry Pi 4 Spin up graphite and temperature2celsius pods";
+        var mkdocs_page_input_path = "pi-stories12.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Raspberry PI k3s stories
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">WELCOME</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">PI4 STORIES</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories1/">Raspberry Pi 4 Basic OS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories2/">Raspberry Pi 4 Prepare for kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories3/">Raspberry Pi 4 Installing k3s software</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories4/">Raspberry Pi 4 Install awesome kubectl aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories5/">Raspberry Pi 4 Installing cert-manager on our cluster</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories6/">Raspberry Pi 4 Upgrading k3s software on your cluster</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories7/">Raspberry Pi 4 YAML everywhere -what about correctness?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories8/">Raspberry Pi 4 Keep your Operating System updated</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories9/">Raspberry Pi 4 Installation of Longhorn</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories10/">Raspberry Pi 4 Issues after upgrading k3s</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories11/">Raspberry Pi 4 Replacing internal traefik with Metallb</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Raspberry Pi 4 Spin up graphite and temperature2celsius pods</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#raspberry_pi_4_cluster_series_-_spin_up_graphite_and_temperature2celsius_pods">Raspberry Pi 4 cluster Series - Spin up graphite and temperature2celsius pods</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#spin_up_graphite_pod">Spin up graphite pod</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#deploy_temperature2celsius_pods">Deploy temperature2celsius pods</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#references">References</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#edit_history">Edit history</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories13/">Raspberry Pi 4 Setup monitoring</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories14/">Raspberry Pi 4 Setup logging with Loki</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories15/">Raspberry Pi 4 Troubleshooting</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories16/">Raspberry Pi 4 Deploying uptime kuma with helm</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories17/">Raspberry Pi 4 Deploying ntopng with helm</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories18/">Raspberry Pi 4 Deploying jenkins with yaml files</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Raspberry PI k3s stories</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">PI4 STORIES</li>
+      <li class="breadcrumb-item active">Raspberry Pi 4 Spin up graphite and temperature2celsius pods</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="pi4_stories">PI4 Stories<a class="headerlink" href="#pi4_stories" title="Permanent link">&para;</a></h1>
+<h2 id="raspberry_pi_4_cluster_series_-_spin_up_graphite_and_temperature2celsius_pods">Raspberry Pi 4 cluster Series - Spin up graphite and temperature2celsius pods<a class="headerlink" href="#raspberry_pi_4_cluster_series_-_spin_up_graphite_and_temperature2celsius_pods" title="Permanent link">&para;</a></h2>
+<p>Graphite is an enterprise-ready monitoring tool that runs equally well on cheap hardware or Cloud infrastructure. Teams use Graphite to track the performance of their websites, applications, business services, and networked servers. It marked the start of a new generation of monitoring tools, making it easier than ever to store, retrieve, share, and visualize time-series data. Info copied from web-site <a href="https://graphiteapp.org/">graphiteapp.org</a>.</p>
+<h3 id="spin_up_graphite_pod">Spin up graphite pod<a class="headerlink" href="#spin_up_graphite_pod" title="Permanent link">&para;</a></h3>
+<p>To start we need the sources to build of graphite pod, therefore, clone our pi4-graphite github repository [1]:</p>
+<pre><code class="language-bash">git clone  https://github.com/gdha/pi4-graphite.git
+</code></pre>
+<p>You will find in the <code>pi4-graphite</code> directory a Dockerfile which will be used to create a new container image:</p>
+<pre><code class="language-bash">To build the docker image on your Pi4 system execute the following command:
+
+$ ./build.sh v1.2
+Login Succeeded
+Building graphite:v1.2
+Sending build context to Docker daemon  137.2kB
+Step 1/11 : FROM graphiteapp/graphite-statsd:1.1.10-4
+1.1.10-4: Pulling from graphiteapp/graphite-statsd
+9981e73032c8: Pull complete 
+de219cb0be19: Pull complete 
+a152a03e3913: Pull complete 
+1e02b3e21032: Pull complete 
+fb7d8007a803: Pull complete 
+Digest: sha256:fb9eb6fdd8f6073dd4ff1acd2169b693d4633045017701713651befbc62fe9f5
+Status: Downloaded newer image for graphiteapp/graphite-statsd:1.1.10-4
+...
+Successfully built afb29746df49
+Successfully tagged ghcr.io/gdha/graphite:v1.2
+Pushing graphite:v1.2 to GitHub Docker Container registry
+</code></pre>
+<p>To start the graphite pod on our kubernetes cluster do the following:</p>
+<pre><code class="language-bash">$ cd kubernetes
+$ kubectl apply -f ./graphite-namespace.yaml 
+namespace/graphite created
+$ kubectl apply -f ./graphite-secret.yaml 
+secret/graphite created
+$ kubectl apply -f ./ghcr-secret.yaml secret/dockerconfigjson-github-com 
+created
+$ kubectl apply -f ./persistentvolumeclaim-graphite.yaml persistentvolumeclaim/graphite 
+created
+$ kubectl apply -f ./statefulset_graphite.yaml statefulset.apps/graphite 
+created
+$ kubectl apply -f ./service_graphite.yaml service/graphite-svc 
+created
+</code></pre>
+<p>Open a browser with URL http://n1:30080 to see the result of the tests:</p>
+<p><img alt="" src="../img/graphite.png" /></p>
+<h3 id="deploy_temperature2celsius_pods">Deploy temperature2celsius pods<a class="headerlink" href="#deploy_temperature2celsius_pods" title="Permanent link">&para;</a></h3>
+<p>The purpose of this pod is to demonstrate that we can send information to our graphite application. We choose to send the temperatire in Celsius once a minute.</p>
+<p>Start with cloning our pi4-temperature2graphite github repository [2]:</p>
+<pre><code class="language-bash">git clone https://github.com/gdha/pi4-temperature2graphite.git
+cd pi4-temperature2graphite
+</code></pre>
+<p>The <code>Dockerfile</code> content is:</p>
+<pre><code class="language-bash"># Dockerfile to create the container used to send the temperature of the RPI4
+# to the graphite pod
+#FROM gdha/rpi-alpine-rootfs/alpine:v1.37
+FROM alpine:latest
+
+LABEL org.opencontainers.image.sourcec=https://github.com/gdha/pi4-temperature2graphite
+LABEL org.opencontainers.image.description &quot;pi4-temperature2graphite build for the ARM64&quot;
+LABEL org.opencontainers.image.licenses &quot;GPL-3.0-or-later&quot;
+LABEL maintainer &quot;Gratien Dhaese &lt;gratien.dhaese@gmail.com&gt;&quot;
+
+COPY entrypoint.sh                                  /entrypoint.sh
+COPY k3s                                            /usr/bin/kubectl
+COPY api_query.sh                                   /api_query.sh
+
+# Update and install dependencies
+RUN  apk add --update nodejs npm curl
+RUN  chmod a+x                                      /entrypoint.sh \
+     &amp;&amp; chmod a+x                                   /api_query.sh  \
+     &amp;&amp; echo &quot;Europe/Brussels&quot; &gt;                    /etc/timezone  \
+     &amp;&amp; chmod 755 /root
+
+ENTRYPOINT [&quot;/entrypoint.sh&quot;]
+</code></pre>
+<p>And, the center of the image is the <code>/entrypoint.sh</code> script:</p>
+<pre><code class="language-bash">#!/bin/sh
+
+# As this script runs on Alpine (busybox) we cannot use bash syntax
+#set -e
+POD=$(echo $HOSTNAME)
+HOSTNAME=$(cat /etc/hostname)
+#SERVER=$(/usr/local/bin/kubectl -n graphite describe pod graphite-0 | grep -i node: | cut  -d/ -f2)
+while true
+do
+  # move the SERVER line inside the loop as at each restart the graphite pod gets a new IP address
+  SERVER=$(/usr/bin/kubectl -n graphite get pods -o wide | tail -1 | awk '{print $6}')
+  cpu_temp=$(cat /sys/class/thermal/thermal_zone0/temp)
+  #cpu_temp=$(($cpu_temp/1000))
+  cpu_temp=$(expr $cpu_temp / 1000)
+  echo &quot;carbon.celsius.$HOSTNAME $cpu_temp $(date +%s)&quot; | timeout 2 nc $SERVER 2003 
+  if [[ $? -eq 0 ]] ; then
+    echo $(date '+%F %T') {&quot;caller&quot;:&quot;entrypoint.sh:16&quot;,&quot;pod&quot;:&quot;$POD&quot;,&quot;level&quot;:&quot;info&quot;,&quot;msg&quot;:&quot;temperature $cpu_temp&quot;}
+  else
+    echo $(date '+%F %T') {&quot;caller&quot;:&quot;entrypoint.sh:18&quot;,&quot;pod&quot;:&quot;$POD&quot;,&quot;level&quot;:&quot;error&quot;,&quot;msg&quot;:&quot;cannot connect to server $SERVER&quot;}
+  fi
+  # echo $cpu_temp
+  sleep 60
+done
+</code></pre>
+<p>To build the image use the <code>build.sh</code> script and it pushes the image to ghcr.io/gdha/pi4-temperature2graphite:v1.7 (which is also the latest). To build version v1.7 we did the following:</p>
+<pre><code class="language-bash">./build v1.7
+</code></pre>
+<p>To bring the pods alive on our kubernetes cluster go to the <code>kubernetes</code> directory and execute:</p>
+<pre><code class="language-bash">$ kubectl apply -f celsius-namespace.yaml
+namespace/celsius created
+
+ kubectl apply -f celsius-secret.yaml
+secret/celsius created
+
+$ kubectl apply -f ghcr-secret.yaml 
+secret/dockerconfigjson-github-com created
+
+$ kubectl apply -f celsius-rbac.yaml 
+erviceaccount/celsius-sa created
+clusterrole.rbac.authorization.k8s.io/celsius-cluster-role created
+rolebinding.rbac.authorization.k8s.io/celsius-cluster-role-binding-ns-celsius created
+rolebinding.rbac.authorization.k8s.io/celsius-cluster-role-binding-ns-graphite created
+
+$ kubectl apply -f celsius-deployment.yaml
+deployment.apps/celsius created
+
+$ kubectl get pods -n celsius -w
+NAME                       READY   STATUS              RESTARTS   AGE
+celsius-6ffb4f4bcc-jl579   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-kh4dh   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-qzt8w   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-nfgnx   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-nptk6   0/1     ContainerCreating   0          16s
+celsius-6ffb4f4bcc-kh4dh   1/1     Running             0          81s
+celsius-6ffb4f4bcc-nfgnx   1/1     Running             0          83s
+celsius-6ffb4f4bcc-nptk6   1/1     Running             0          84s
+celsius-6ffb4f4bcc-jl579   1/1     Running             0          86s
+celsius-6ffb4f4bcc-qzt8w   1/1     Running             0          89s
+
+$ kubectl logs -n celsius celsius-6ffb4f4bcc-qzt8w
+INFO[0000] Acquiring lock file /var/lib/rancher/k3s/data/.lock 
+INFO[0000] Preparing data dir /var/lib/rancher/k3s/data/8c4262cf7fdd652cccb03a99a99fdffc96d9ad41d7e57af9eb08c7ac2867c72a 
+</code></pre>
+<p>After a couple of minutes you can check the graphite site again:</p>
+<p><img alt="" src="../img/graphite-celsius.png" /></p>
+<p>When you would like to replace the <code>pi4-temperature2graphite</code> container with a newer version in the k3s cluster edit the file <code>kubernetes/celsius-deployment.yaml</code> and update the line containing the image name and replace the old version number with the new one, e.g. v1.8:</p>
+<pre><code class="language-bash">image: ghcr.io/gdha/pi4-temperature2graphite:v1.8
+</code></pre>
+<p>To perform a rolling upgrade and watch the upgrade process execute the commands:</p>
+<pre><code class="language-bash">$ kubectl replace -f kuvernetes/celsius-deployment.yaml
+$ kubectl get pods -n celsius -w
+NAME                       READY   STATUS              RESTARTS       AGE
+celsius-6ffb4f4bcc-qzt8w   1/1     Running             3 (134m ago)   14d
+celsius-6ffb4f4bcc-kh4dh   1/1     Running             3 (134m ago)   14d
+celsius-6ffb4f4bcc-nptk6   1/1     Running             3 (134m ago)   14d
+celsius-6ffb4f4bcc-nfgnx   1/1     Running             3 (134m ago)   14d
+celsius-6ffb4f4bcc-jl579   1/1     Terminating         3 (135m ago)   14d
+celsius-779654f68d-9lmq8   0/1     ContainerCreating   0              10s
+celsius-779654f68d-d56q6   0/1     ContainerCreating   0              10s
+celsius-779654f68d-j6m6t   0/1     ContainerCreating   0              10s
+celsius-6ffb4f4bcc-jl579   0/1     Terminating         3              14d
+celsius-6ffb4f4bcc-jl579   0/1     Terminating         3              14d
+celsius-6ffb4f4bcc-jl579   0/1     Terminating         3              14d
+celsius-779654f68d-9lmq8   1/1     Running             0              50s
+celsius-6ffb4f4bcc-nptk6   1/1     Terminating         3 (135m ago)   14d
+celsius-779654f68d-jbxg8   0/1     Pending             0              0s
+celsius-779654f68d-jbxg8   0/1     Pending             0              0s
+celsius-779654f68d-jbxg8   0/1     ContainerCreating   0              0s
+celsius-779654f68d-j6m6t   1/1     Running             0              54s
+celsius-6ffb4f4bcc-kh4dh   1/1     Terminating         3 (135m ago)   14d
+celsius-779654f68d-q5rf9   0/1     Pending             0              0s
+celsius-779654f68d-q5rf9   0/1     Pending             0              0s
+celsius-779654f68d-q5rf9   0/1     ContainerCreating   0              0s
+celsius-779654f68d-d56q6   1/1     Running             0              57s
+celsius-6ffb4f4bcc-qzt8w   1/1     Terminating         3 (135m ago)   14d
+celsius-6ffb4f4bcc-nptk6   0/1     Terminating         3              14d
+celsius-6ffb4f4bcc-nptk6   0/1     Terminating         3              14d
+celsius-6ffb4f4bcc-nptk6   0/1     Terminating         3              14d
+celsius-779654f68d-jbxg8   1/1     Running             0              39s
+celsius-6ffb4f4bcc-nfgnx   1/1     Terminating         3 (135m ago)   14d
+celsius-6ffb4f4bcc-kh4dh   0/1     Terminating         3              14d
+celsius-6ffb4f4bcc-kh4dh   0/1     Terminating         3              14d
+celsius-6ffb4f4bcc-kh4dh   0/1     Terminating         3              14d
+celsius-6ffb4f4bcc-qzt8w   0/1     Terminating         3              14d
+celsius-6ffb4f4bcc-qzt8w   0/1     Terminating         3              14d
+celsius-6ffb4f4bcc-qzt8w   0/1     Terminating         3              14d
+celsius-779654f68d-q5rf9   1/1     Running             0              44s
+celsius-6ffb4f4bcc-nfgnx   0/1     Terminating         3 (136m ago)   14d
+celsius-6ffb4f4bcc-nfgnx   0/1     Terminating         3 (136m ago)   14d
+celsius-6ffb4f4bcc-nfgnx   0/1     Terminating         3 (136m ago)   14d
+</code></pre>
+<h3 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h3>
+<p>[1] <a href="https://github.com/gdha/pi4-graphite">pi4-graphite GitHub repository</a></p>
+<p>[2] <a href="https://github.com/gdha/pi4-temperature2graphite">pi4-temperature2graphite GitHub repository</a></p>
+<h3 id="edit_history">Edit history<a class="headerlink" href="#edit_history" title="Permanent link">&para;</a></h3>
+<ul>
+<li>09/Feb/2023: adding the references</li>
+<li>08/Feb/2023: improved the content of temperature2celsius section</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../pi-stories11/" class="btn btn-neutral float-left" title="Raspberry Pi 4 Replacing internal traefik with Metallb"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../pi-stories13/" class="btn btn-neutral float-right" title="Raspberry Pi 4 Setup monitoring">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../pi-stories11/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../pi-stories13/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

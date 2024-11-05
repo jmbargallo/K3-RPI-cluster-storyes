@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Raspberry Pi 4 Setup monitoring - Raspberry PI k3s stories</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Raspberry Pi 4 Setup monitoring";
+        var mkdocs_page_input_path = "pi-stories13.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Raspberry PI k3s stories
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">WELCOME</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">PI4 STORIES</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories1/">Raspberry Pi 4 Basic OS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories2/">Raspberry Pi 4 Prepare for kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories3/">Raspberry Pi 4 Installing k3s software</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories4/">Raspberry Pi 4 Install awesome kubectl aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories5/">Raspberry Pi 4 Installing cert-manager on our cluster</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories6/">Raspberry Pi 4 Upgrading k3s software on your cluster</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories7/">Raspberry Pi 4 YAML everywhere -what about correctness?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories8/">Raspberry Pi 4 Keep your Operating System updated</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories9/">Raspberry Pi 4 Installation of Longhorn</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories10/">Raspberry Pi 4 Issues after upgrading k3s</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories11/">Raspberry Pi 4 Replacing internal traefik with Metallb</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories12/">Raspberry Pi 4 Spin up graphite and temperature2celsius pods</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Raspberry Pi 4 Setup monitoring</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#raspberry_pi_4_cluster_series_-_setup_monitoring">Raspberry Pi 4 cluster Series - Setup monitoring</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#prometheus_operator">Prometheus Operator</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#install_service_monitors">Install Service Monitors</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#prometheus_node_exporter">Prometheus Node Exporter</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#kube_state_metrics">Kube State Metrics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#kubelet">Kubelet</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#traefik">Traefik</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#install_prometheus">Install Prometheus</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#longhorn_service_monitor">Longhorn service monitor</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#install_grafana">Install grafana</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#references">References</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories14/">Raspberry Pi 4 Setup logging with Loki</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories15/">Raspberry Pi 4 Troubleshooting</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories16/">Raspberry Pi 4 Deploying uptime kuma with helm</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories17/">Raspberry Pi 4 Deploying ntopng with helm</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories18/">Raspberry Pi 4 Deploying jenkins with yaml files</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Raspberry PI k3s stories</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">PI4 STORIES</li>
+      <li class="breadcrumb-item active">Raspberry Pi 4 Setup monitoring</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="pi4_stories">PI4 Stories<a class="headerlink" href="#pi4_stories" title="Permanent link">&para;</a></h1>
+<h2 id="raspberry_pi_4_cluster_series_-_setup_monitoring">Raspberry Pi 4 cluster Series - Setup monitoring<a class="headerlink" href="#raspberry_pi_4_cluster_series_-_setup_monitoring" title="Permanent link">&para;</a></h2>
+<p>This story is mostly based on <a href="https://rpi4cluster.com/monitoring/monitor-intro/">K3s Monitoring</a>. Basically, we need to install Prometheus and many other components to be able to feed Grafana. Our goal is to get something like:</p>
+<p><img alt="" src="../img/grafana-k8s-cluster-overview.png" /></p>
+<p>To start we have to download the <a href="https://github.com/gdha/pi4-monitoring">pi4-monitoring GitHub project</a>:</p>
+<pre><code class="language-bash">$ git clone https://github.com/gdha/pi4-monitoring.git
+$ cd pi4-monitoring
+$ ls
+grafana  images  kubelet  kube-state-metrics  LICENSE  longhorn-servicemonitor.yaml  monitoring-namespace.yaml  node-exporter  prometheus  prometheus-operator  readme.md  traefik
+</code></pre>
+<h3 id="prometheus_operator">Prometheus Operator<a class="headerlink" href="#prometheus_operator" title="Permanent link">&para;</a></h3>
+<p>One instance that will help us provision Prometheus, and some of its components. It extends the Kubernetes API, so that when we create some YAML deployments it will look as if we’re telling Kubernetes to deploy something, but it’s actually telling Prometheus Operator to do it for us. Official documentation: <a href="https://prometheus-operator.dev/docs/prologue/introduction/">Prometheus Operator</a></p>
+<p>We executed the following steps to install the Prometheus Operator [1] - is optional as it is already present and prepared under the prometheus-operator directory:</p>
+<pre><code class="language-bash">$ cd prometheus-operator
+$ wget https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/master/bundle.yaml
+</code></pre>
+<p>Followed by editing with sed the <code>bundle.yaml</code> file to replace the default namespace by monitoring (which is the namespace in where we want to built our monitoring tools for kubernetes).</p>
+<p>Then we first create the namespace and apply the bundle.yaml file as seen below:</p>
+<pre><code class="language-bash">$ grep 'namespace: default' bundle.yaml
+  namespace: default
+  namespace: default
+  namespace: default
+  namespace: default
+
+$ sed -i 's/namespace: default/namespace: monitoring/g' bundle.yaml
+
+$ grep 'namespace: ' bundle.yaml
+                      a `namespace: &lt;object namespace&gt;` matcher.'
+  namespace: monitoring
+  namespace: monitoring
+  namespace: monitoring
+  namespace: monitoring
+</code></pre>
+<p>To create the prometheus-operator we first need to create the namespace <code>monitoring</code>:</p>
+<pre><code class="language-bash">$ kubectl create -f ../monitoring-namespace.yaml 
+namespace/monitoring created
+</code></pre>
+<p>Then, we can create the prometheus-operator as follow:</p>
+<pre><code class="language-bash">$ cd ~/projects/pi4-monitoring/prometheus-operator
+$ kubectl apply --server-side -f bundle.yaml 
+customresourcedefinition.apiextensions.k8s.io/alertmanagerconfigs.monitoring.coreos.com serverside-applied
+customresourcedefinition.apiextensions.k8s.io/alertmanagers.monitoring.coreos.com serverside-applied
+customresourcedefinition.apiextensions.k8s.io/podmonitors.monitoring.coreos.com serverside-applied
+customresourcedefinition.apiextensions.k8s.io/probes.monitoring.coreos.com serverside-applied
+customresourcedefinition.apiextensions.k8s.io/prometheuses.monitoring.coreos.com serverside-applied
+customresourcedefinition.apiextensions.k8s.io/prometheusrules.monitoring.coreos.com serverside-applied
+customresourcedefinition.apiextensions.k8s.io/servicemonitors.monitoring.coreos.com serverside-applied
+customresourcedefinition.apiextensions.k8s.io/thanosrulers.monitoring.coreos.com serverside-applied
+clusterrolebinding.rbac.authorization.k8s.io/prometheus-operator serverside-applied
+clusterrole.rbac.authorization.k8s.io/prometheus-operator serverside-applied
+deployment.apps/prometheus-operator serverside-applied
+serviceaccount/prometheus-operator serverside-applied
+service/prometheus-operator serverside-applied
+
+
+$ kubectl get pods -n monitoring
+NAME                                   READY   STATUS    RESTARTS   AGE
+prometheus-operator-6d56dc87f4-tg5qh   1/1     Running   0          25s
+</code></pre>
+<p>Next step is to prepare the service monitors.</p>
+<h3 id="install_service_monitors">Install Service Monitors<a class="headerlink" href="#install_service_monitors" title="Permanent link">&para;</a></h3>
+<h4 id="prometheus_node_exporter">Prometheus Node Exporter<a class="headerlink" href="#prometheus_node_exporter" title="Permanent link">&para;</a></h4>
+<p>We will install the Prometheus Node Exporter [2] service which is a daemonset to collect metrics from individual cluster nodes, and many other details.
+The <a href="https://github.com/gdha/pi4-monitoring/tree/master/node-exporter">installation is quite simple</a>.</p>
+<pre><code class="language-bash">$ cd ~/projects/pi4-monitoring
+$ kubectl apply -f node-exporter/
+clusterrolebinding.rbac.authorization.k8s.io/node-exporter created
+clusterrole.rbac.authorization.k8s.io/node-exporter created
+daemonset.apps/node-exporter created
+serviceaccount/node-exporter created
+servicemonitor.monitoring.coreos.com/node-exporter created
+service/node-exporter created
+</code></pre>
+<p>This will create all permissions, and deploy the pod with the application Node Exporter, that will read metrics from Linux.</p>
+<p>After doing so, you should see node-exporter-xxxx pods in the monitoring namespace; I have 5 nodes, so it’s there 5 times.</p>
+<pre><code class="language-bash">$ kubectl get pods -n monitoring -o wide
+NAME                                   READY   STATUS    RESTARTS   AGE   IP              NODE   NOMINATED NODE   READINESS GATES
+prometheus-operator-6d56dc87f4-tg5qh   1/1     Running   0          10m   10.42.2.197     n2     &lt;none&gt;           &lt;none&gt;
+node-exporter-flgs7                    2/2     Running   0          61s   192.168.0.204   n4     &lt;none&gt;           &lt;none&gt;
+node-exporter-r4wfz                    2/2     Running   0          61s   192.168.0.202   n2     &lt;none&gt;           &lt;none&gt;
+node-exporter-jblkk                    2/2     Running   0          61s   192.168.0.201   n1     &lt;none&gt;           &lt;none&gt;
+node-exporter-fhkw6                    2/2     Running   0          61s   192.168.0.203   n3     &lt;none&gt;           &lt;none&gt;
+node-exporter-jwt8k                    2/2     Running   0          61s   192.168.0.205   n5     &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<h4 id="kube_state_metrics">Kube State Metrics<a class="headerlink" href="#kube_state_metrics" title="Permanent link">&para;</a></h4>
+<p>This is a simple service that listens to the Kubernetes API, and generates metrics about the state of the objects.</p>
+<p>Link to official GitHub: <a href="https://github.com/kubernetes/kube-state-metrics">kube-state-metrics</a>.</p>
+<p>When we download the <a href="https://github.com/gdha/pi4-monitoring">GitHub project pi4-monitoring</a> then <code>cd ~/projects/pi4monitoring</code> and execute:</p>
+<pre><code class="language-bash">$ kubectl apply -f kube-state-metrics/
+$ kubectl get pods -n monitoring | grep kube-state
+kube-state-metrics-6f8578cffd-cmks6    1/1     Running   19 (93m ago)   45d
+</code></pre>
+<h4 id="kubelet">Kubelet<a class="headerlink" href="#kubelet" title="Permanent link">&para;</a></h4>
+<p>Kubelet, in case you did not know, is an essential part of Kubernetes’ control plane, and is also something that exposes Prometheus metrics by default in the port 10255.
+And as before:</p>
+<pre><code class="language-bash">$ cd ~/projects/pi4monitoring
+$ kubectl apply -f kubelet-servicemonitor.yaml
+servicemonitor.monitoring.coreos.com/kubelet created
+</code></pre>
+<h4 id="traefik">Traefik<a class="headerlink" href="#traefik" title="Permanent link">&para;</a></h4>
+<p>I do not use Traefik much in my setup, but it is there, and it also exposes Prometheus-ready data, so why not...</p>
+<pre><code class="language-bash">$ cd ~/projects/pi4monitoring
+$ kubectl apply -f traefik-servicemonitor.yaml
+servicemonitor.monitoring.coreos.com/traefik created
+$ kubectl get servicemonitors.monitoring.coreos.com -n monitoring
+NAME                                 AGE
+node-exporter                        45d
+kube-state-metrics                   45d
+kubelet                              45d
+traefik                              45d
+</code></pre>
+<h3 id="install_prometheus">Install Prometheus<a class="headerlink" href="#install_prometheus" title="Permanent link">&para;</a></h3>
+<p>Now, we are going to deploy a single instance of Prometheus. Normally, you would/should deploy multiple instances spread throughout the cluster. For example, one instance dedicated to monitor just Kubernetes API, the next dedicated to monitor nodes, and so on... As with many things in the Kubernetes world, there is no specific way things should look 🙂, so to save resources, we will deploy just one.</p>
+<p>To deploy a single instance of prometheus perform the following actions:</p>
+<pre><code class="language-bash">$ cd ~/projects/pi4-monitoring
+$ kubectl apply -f prometheus/
+clusterrole.rbac.authorization.k8s.io/prometheus created
+clusterrolebinding.rbac.authorization.k8s.io/prometheus created
+serviceaccount/prometheus created
+service/prometheus-external created
+service/prometheus created
+prometheus.monitoring.coreos.com/prometheus-persistant created
+</code></pre>
+<p>When you inside the <code>prometheus.yaml</code> file you will the Service Monitors we created:</p>
+<pre><code class="language-bash">  serviceMonitorSelector:
+    matchExpressions:
+    - key: name
+      operator: In
+      values:
+      - longhorn-prometheus-servicemonitor
+      - kube-state-metrics
+      - node-exporter
+      - kubelet
+      - traefik
+</code></pre>
+<p>Furthermore, as storage we will be using the longhorn volumes as you can see:</p>
+<pre><code class="language-bash">  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 20Gi
+</code></pre>
+<p>The longhorn volume created is:</p>
+<p><img alt="" src="../img/PVC-prometheus-persistant.png" /></p>
+<p>The <code>prometheus-service-ext.yaml</code> file defines the loadbalancer piece. See:</p>
+<pre><code class="language-bash">$ kubectl get svc -n monitoring | grep external
+prometheus-external   LoadBalancer   10.43.53.220    192.168.0.232   9090:31862/TCP      45d
+</code></pre>
+<p>When you browse to URL: http://192.168.0.232:9090/ you will get to see :</p>
+<p><img alt="" src="../img/prometheus-initial-screen.png" /></p>
+<p>You can reverse the background colors with the icons on the right corner (I prefer black as background). When you select the "Service Discovery" under the status tab you will see the following screen proofing we receive information about our kubernetes cluster:</p>
+<p><img alt="" src="../img/prometheus.png" /></p>
+<h4 id="longhorn_service_monitor">Longhorn service monitor<a class="headerlink" href="#longhorn_service_monitor" title="Permanent link">&para;</a></h4>
+<p>Our storage provisioner Longhorn, that we deployed somewhere near the start of this whole K3s Kubernetes cluster setup, also natively provides data for Prometheus.</p>
+<p>Create in the folder <code>monitoring</code>, that we will put most of our configs in, the file <code>[longhorn-servicemonitor.yaml](https://github.com/gdha/pi4-monitoring/blob/master/longhorn-servicemonitor.yaml)</code>.</p>
+<p>As you can see, we are not talking to Kubernetes API (we are... but...), but to <code>apiVersion: monitoring.coreos.com/v1</code>, so we are basically telling Prometheus Operator to create something for us. In this case it’s kind: <code>ServiceMonitor</code>.</p>
+<p>This should be clear, <code>metadata: -&gt; namespace: monitoring</code>, we are telling it to deploy into our monitoring namespace.</p>
+<p>The rest under <code>spec:</code> is basically telling what app the Service Monitor should "bind to". It’s looking for <code>app: longhorn-manager</code> in namespace <code>longhorn-system</code> and <code>port: manager</code>. This port could be a port number, but it also can have a name, so in this case it’s named manager.</p>
+<p>This is the longhorn-manager we are targeting.</p>
+<pre><code class="language-bash">$ kubectl get daemonset -n longhorn-system
+NAME                       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+engine-image-ei-fc06c6fb   5         5         5       5            5           &lt;none&gt;          48d
+longhorn-manager           5         5         5       5            5           &lt;none&gt;          48d
+longhorn-csi-plugin        5         5         5       5            5           &lt;none&gt;          48d
+</code></pre>
+<p>To describea the daemonset of longhorn-manager execute:</p>
+<pre><code class="language-bash">$ kubectl describe daemonset longhorn-manager -n longhorn-system | grep Port
+    Port:       &lt;none&gt;
+    Host Port:  &lt;none&gt;
+    Port:       9500/TCP
+    Host Port:  0/TCP
+</code></pre>
+<p>Alright, now we can move on the grafana.</p>
+<h3 id="install_grafana">Install grafana<a class="headerlink" href="#install_grafana" title="Permanent link">&para;</a></h3>
+<p>Our grafana pod will also use a longhorn device as defined under file:</p>
+<pre><code class="language-bash"> cat grafana-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: longhorn-grafana-pvc
+  namespace: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
+</code></pre>
+<p>To install the pod just run:</p>
+<pre><code class="language-bash">$ cd ~/projects/pi4-monitoring
+$ kubectl apply -f grafana/
+deployment.apps/grafana created
+persistentvolumeclaim/longhorn-grafana-pvc created
+service/grafana created
+serviceaccount/grafana created
+
+$ kubectl get endpoints -n monitoring
+NAME                  ENDPOINTS                                                              AGE
+prometheus-operator   10.42.2.225:8080                                                       5d16h
+kube-state-metrics    10.42.2.220:8081,10.42.2.220:8080                                      5d16h
+prometheus-operated   10.42.2.233:9090                                                       5d16h
+prometheus            10.42.2.233:9090                                                       5d16h
+prometheus-external   10.42.2.233:9090                                                       5d16h
+node-exporter         192.168.0.201:9100,192.168.0.202:9100,192.168.0.203:9100 + 2 more...   5d16h
+grafana               10.42.1.21:3000                                                        2m44s
+
+$ kubectl get svc -n monitoring
+NAME                  TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)             AGE
+prometheus-operator   ClusterIP      None            &lt;none&gt;          8080/TCP            63d
+node-exporter         ClusterIP      None            &lt;none&gt;          9100/TCP            62d
+kube-state-metrics    ClusterIP      None            &lt;none&gt;          8080/TCP,8081/TCP   62d
+prometheus-external   LoadBalancer   10.43.53.220    192.168.0.232   9090:31862/TCP      62d
+prometheus            ClusterIP      10.43.78.140    &lt;none&gt;          9090/TCP            62d
+prometheus-operated   ClusterIP      None            &lt;none&gt;          9090/TCP            62d
+grafana               LoadBalancer   10.43.108.229   192.168.0.233   3000:32251/TCP      62d
+</code></pre>
+<p>Open a browser and use url http://192.168.0.233:3000/ and login with the default admin account with first time password admin.</p>
+<p><img alt="" src="../img/grafana-home.png" /></p>
+<p>On the left pane we can import grafana graphs with "+" -&gt; create -&gt; import</p>
+<p>From <a href="https://grafana.com/grafana/dashboards/">GrafanaLabs</a> we can import some examples:</p>
+<ul>
+<li>Kubernetes Nodes from GrafanaLabs - copy the ID into your clipboard:</li>
+</ul>
+<p><img alt="" src="../img/grafanaLabs-k8s-nodes.png" /></p>
+<p>And, paste the ID into:</p>
+<p><img alt="" src="../img/grafana-import.png" /></p>
+<p>and, perform the import in your grafana window.
+You will see the results in an instance:</p>
+<p><img alt="" src="../img/grafana-k8s-nodes.png" /></p>
+<ul>
+<li>Another good example is <a href="https://grafana.com/grafana/dashboards/7249-kubernetes-cluster/">Kubernetes Cluster from GrafanaLabs</a> to import into your grafana dashboard.</li>
+</ul>
+<p><img alt="" src="../img/kubernetes-cluster-grafana.png" /></p>
+<ul>
+<li>Even better is to create your own dashboard, in our case the already existing graphite celsius graphs:</li>
+</ul>
+<p><img alt="" src="../img/graphite-celsius.png" /></p>
+<p>Try it out as it is not that complicated as an exercise and you will be proud of your first designed dashboard:</p>
+<p><img alt="" src="../img/pi4-celsius-grafana.png" /></p>
+<h3 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h3>
+<p>[1] <a href="https://github.com/gdha/pi4-monitoring/tree/master/prometheus-operator">Prometheus Operator GitHub sources</a></p>
+<p>[2] <a href="https://github.com/prometheus/node_exporter">Prometheus Node Exporter</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../pi-stories12/" class="btn btn-neutral float-left" title="Raspberry Pi 4 Spin up graphite and temperature2celsius pods"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../pi-stories14/" class="btn btn-neutral float-right" title="Raspberry Pi 4 Setup logging with Loki">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../pi-stories12/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../pi-stories14/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Raspberry Pi 4 Setup logging with Loki - Raspberry PI k3s stories</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Raspberry Pi 4 Setup logging with Loki";
+        var mkdocs_page_input_path = "pi-stories14.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Raspberry PI k3s stories
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">WELCOME</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">PI4 STORIES</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories1/">Raspberry Pi 4 Basic OS Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories2/">Raspberry Pi 4 Prepare for kubernetes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories3/">Raspberry Pi 4 Installing k3s software</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories4/">Raspberry Pi 4 Install awesome kubectl aliases</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories5/">Raspberry Pi 4 Installing cert-manager on our cluster</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories6/">Raspberry Pi 4 Upgrading k3s software on your cluster</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories7/">Raspberry Pi 4 YAML everywhere -what about correctness?</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories8/">Raspberry Pi 4 Keep your Operating System updated</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories9/">Raspberry Pi 4 Installation of Longhorn</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories10/">Raspberry Pi 4 Issues after upgrading k3s</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories11/">Raspberry Pi 4 Replacing internal traefik with Metallb</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories12/">Raspberry Pi 4 Spin up graphite and temperature2celsius pods</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories13/">Raspberry Pi 4 Setup monitoring</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Raspberry Pi 4 Setup logging with Loki</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#install_arkade">Install Arkade</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#installation_of_loki_and_promtail">Installation of loki and promtail</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#references">References</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories15/">Raspberry Pi 4 Troubleshooting</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories16/">Raspberry Pi 4 Deploying uptime kuma with helm</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories17/">Raspberry Pi 4 Deploying ntopng with helm</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pi-stories18/">Raspberry Pi 4 Deploying jenkins with yaml files</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Raspberry PI k3s stories</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">PI4 STORIES</li>
+      <li class="breadcrumb-item active">Raspberry Pi 4 Setup logging with Loki</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p>PI4 Stories</p>
+<h2 id="raspberry_pi_4_cluster_series_-_setup_logging_with_loki">Raspberry Pi 4 cluster Series - Setup logging with Loki<a class="headerlink" href="#raspberry_pi_4_cluster_series_-_setup_logging_with_loki" title="Permanent link">&para;</a></h2>
+<p>This story is mostly based on <a href="https://rpi4cluster.com/monitoring/k3s-logging/">Logging Logs</a> [1] article.</p>
+<p>We have our Prometheus and Grafana on k3s cluster if you followed my guides. But Prometheus is not able to get logs from k3s nodes, containers, Kubernetes API, and it's not made of that kind of monitoring. We need Loki + Promtail, you can find all info on their Grafana Loki and Promtail.</p>
+<ul>
+<li>
+<p>Loki - or also known as Grafana Loki - log aggregation system, it does not index the contents of the logs, but rather a set of labels for each log stream. In simple terms, it's the app that accepts logs from everything and store it.</p>
+</li>
+<li>
+<p>Promtail - is a tool that reads the logs from various sources like OS, Containers, Kubernetes API server etc... and push them to Loki.</p>
+</li>
+</ul>
+<p>We will be using Arkade to install loki, therefore, we first need to install it.</p>
+<h3 id="install_arkade">Install Arkade<a class="headerlink" href="#install_arkade" title="Permanent link">&para;</a></h3>
+<p>This is basically Helm, just made even simpler.</p>
+<p>More info about Arkade: <a href="https://github.com/alexellis/arkade">https://github.com/alexellis/arkade</a></p>
+<pre><code class="language-bash">$ curl -SLsf https://dl.get-arkade.dev/ | sudo sh
+aarch64
+Downloading package https://github.com/alexellis/arkade/releases/download/0.8.62/arkade-arm64 as /tmp/arkade-arm64
+Download complete.
+
+Running with sufficient permissions to attempt to move arkade to /usr/local/bin
+New version of arkade installed to /usr/local/bin
+Creating alias 'ark' for 'arkade'.
+            _             _
+  __ _ _ __| | ____ _  __| | ___
+ / _` | '__| |/ / _` |/ _` |/ _ \
+| (_| | |  |   &lt; (_| | (_| |  __/
+ \__,_|_|  |_|\_\__,_|\__,_|\___|
+
+Open Source Marketplace For Developer Tools
+
+Version: 0.8.62
+Git Commit: 003e8716bbc987c412643af3a90cf87ef778bd2e
+
+ 🐳 arkade needs your support: https://github.com/sponsors/alexellis
+gdha@n1:~/projects/pi4-logging$ ls /usr/local/bin
+ark  arkade  crictl  golangci-lint  helm  k3s  k3s-killall.sh  k3s-uninstall.sh  kubectl  kube-linter
+</code></pre>
+<p>To upgrade arkade just re-run above command.</p>
+<h3 id="installation_of_loki_and_promtail">Installation of loki and promtail<a class="headerlink" href="#installation_of_loki_and_promtail" title="Permanent link">&para;</a></h3>
+<p>Before we start we have to make sure that the namespace has been created:</p>
+<pre><code class="language-bash">gdha@n1:~/projects/pi4-logging$ kubectl apply -f logging-namespace.yaml 
+namespace/logging created
+</code></pre>
+<p>Then, we can use the installed <code>arkade</code> executable to install loki</p>
+<pre><code class="language-bash">gdha@n1:~/projects/pi4-logging$ arkade install loki -n logging  --persistence
+2023/02/03 15:24:10 
+Using Kubeconfig: /home/gdha/.kube/config
+[Warning] unable to create namespace logging, may already exist: Error from server (AlreadyExists): namespaces &quot;logging&quot; already exists
+Client: aarch64, Linux
+2023/02/03 15:24:10 User dir established as: /home/gdha/.arkade/
+2023/02/03 15:24:10 Looking up version for helm
+2023/02/03 15:24:10 Found: v3.11.0
+Downloading: https://get.helm.sh/helm-v3.11.0-linux-arm64.tar.gz
+/tmp/helm-v3.11.0-linux-arm64.tar.gz written.
+2023/02/03 15:24:14 Looking up version for helm
+2023/02/03 15:24:14 Found: v3.11.0
+2023/02/03 15:24:15 Extracted: /tmp/helm
+2023/02/03 15:24:15 Copying /tmp/helm to /home/gdha/.arkade/bin/helm
+Downloaded to:  /home/gdha/.arkade/bin/helm helm
+&quot;grafana&quot; has been added to your repositories
+
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the &quot;metallb&quot; chart repository
+...Successfully got an update from the &quot;longhorn&quot; chart repository
+...Successfully got an update from the &quot;traefik&quot; chart repository
+...Successfully got an update from the &quot;kiwigrid&quot; chart repository
+...Successfully got an update from the &quot;grafana&quot; chart repository
+Update Complete. ⎈Happy Helming!⎈
+
+VALUES values.yaml
+Command: /home/gdha/.arkade/bin/helm [upgrade --install loki-stack grafana/loki-stack --namespace logging --values /tmp/charts/loki-stack/values.yaml --set loki.persistence.enabled=true]
+Release &quot;loki-stack&quot; does not exist. Installing it now.
+NAME: loki-stack
+LAST DEPLOYED: Fri Feb  3 15:24:22 2023
+NAMESPACE: logging
+STATUS: deployed
+REVISION: 1
+NOTES:
+The Loki stack has been deployed to your cluster. Loki can now be added as a datasource in Grafana.
+
+See http://docs.grafana.org/features/datasources/loki/ for more detail.
+=======================================================================
+= loki has been installed.                                   =
+=======================================================================
+
+# Get started with loki here:
+# https://grafana.com/docs/loki/latest
+
+# See how to integrate loki with Grafana here
+# https://grafana.com/docs/loki/latest/getting-started/grafana
+
+# Check loki's logs with:
+
+kubectl logs svc/loki-stack
+
+kubectl logs svc/loki-stack-headless
+
+
+# If you installed with Grafana you can access the dashboard with the username &quot;admin&quot; and password shown below
+ # To get password
+ kubectl get secret loki-stack-grafana -o jsonpath=&quot;{.data.admin-password}&quot; | base64 --decode ; echo
+
+ # Forward traffic to your localhost
+ kubectl port-forward service/loki-stack-grafana 3000:80
+
+
+
+whale arkade needs your support: https://github.com/sponsors/alexellis
+</code></pre>
+<p>Now, verify if the pods have been created:</p>
+<pre><code class="language-bash">gdha@n1:~/projects/pi4-logging$ kubectl get pods -n logging
+NAME                        READY   STATUS    RESTARTS   AGE
+loki-stack-0                0/1     Running   0          114s
+loki-stack-promtail-d45tz   1/1     Running   0          114s
+loki-stack-promtail-qv75h   1/1     Running   0          114s
+loki-stack-promtail-rhcr9   1/1     Running   0          114s
+loki-stack-promtail-dwz7s   1/1     Running   0          114s
+loki-stack-promtail-4qwlg   1/1     Running   0          114s
+</code></pre>
+<p>As last we still need to apply the patch:</p>
+<pre><code class="language-bash">gdha@n1:~/projects/pi4-logging$ cat patch.yaml 
+spec:
+  template:
+    spec:
+      tolerations:
+        - operator: Exists
+
+gdha@n1:~/projects/pi4-logging$ kubectl patch daemonset loki-stack-promtail -n logging --patch &quot;$(cat patch.yaml)&quot;
+daemonset.apps/loki-stack-promtail patched
+</code></pre>
+<p>Check if the services are available for usage:</p>
+<pre><code class="language-bash">gdha@n1:~/projects/pi4-logging$ kubectl get svc -n logging
+NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+loki-stack-headless     ClusterIP   None           &lt;none&gt;        3100/TCP   6m39s
+loki-stack-memberlist   ClusterIP   None           &lt;none&gt;        7946/TCP   6m39s
+loki-stack              ClusterIP   10.43.220.29   &lt;none&gt;        3100/TCP   6m39s
+</code></pre>
+<p>To view the logs we need to login onto our Grafana site and via configure - data sources - add data sources and search for Loki</p>
+<p><img alt="" src="../img/loki-add-data-source.png" /></p>
+<p>and select "loki". On the next screen fill in the URL section the IP address found with 'loki-stack' service.</p>
+<p><img alt="" src="../img/loki-url.png" /></p>
+<p>In our case it is <code>http://10.43.220.29:3100</code>. Thereafter, it is kust a matter of pressing "Save &amp; Test" button.</p>
+<p>In the side bar of Grafana click on the "Explore" button and select "Loki" in the upper left corner (of the service to use).</p>
+<p>Use Loki's "Log Labels" to select what you want to see - just play with it...</p>
+<p><img alt="" src="../img/loki-log-labels.png" /> </p>
+<p>Your imagination is the limit with Loki/Grafana, e.g.</p>
+<p><img alt="" src="../img/loki.png" /></p>
+<h3 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h3>
+<p>[1] <a href="https://rpi4cluster.com/monitoring/k3s-logging/">k3s Monitoring - Logging Logs</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../pi-stories13/" class="btn btn-neutral float-left" title="Raspberry Pi 4 Setup monitoring"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../pi-stories15/" class="btn btn-neutral float-right" title="Raspberry Pi 4 Troubleshooting">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../pi-stories13/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../pi-stories15/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
